@@ -1,0 +1,11 @@
+{
+  "name": "businessone_backend",
+  "version": "1.0.0",
+  "description": "Business and startup directory of Nepal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Suraj Rimal & Abishek Bimali",
+  "license": "ISC"
+}
