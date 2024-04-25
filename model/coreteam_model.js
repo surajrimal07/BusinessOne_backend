@@ -8,6 +8,7 @@ const reviewSchema = new Schema({
     date: { type: Date, default: Date.now }
 });
 
+
 const teamMemberSchema = new Schema({
     ownerId: String,
     role: String,
@@ -17,4 +18,4 @@ const teamMemberSchema = new Schema({
     reviews: [reviewSchema]
 });
 
-export default teamMemberSchema;
+export default {reviewSchema,teamMemberSchema};
