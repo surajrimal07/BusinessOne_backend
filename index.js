@@ -30,6 +30,9 @@ app.get("/", (req, res) => {
   res.send("BusinessOne API Has been started");
 });
 
+app.use("/api/admin", require("./routes/adminRoute"));
+app.use("/api/domain", require("./routes/workDomainRoute"));
+app.use("/api/company", require("./routes/companyRoute"));
 
 
 app.listen(PORT, () => {

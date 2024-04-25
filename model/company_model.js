@@ -1,16 +1,16 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
-const companySchema = new Schema({
-    id: String,  //company id
+// const Schema = mongoose.Schema;
+
+const companySchema = mongoose.Schema({
     name: String, //company name
     sections: {
         introduction: {
             data: {
                 name: String, //Company Name or known as
-                logo: url, //Company Logo
+                logo: String, //Company Logo
                 subtitle: String, //company tagline
-                sectors: [{ id: String, name: String }],
+                sectors: [{  name: String }],
                 socialLinks: { //social media links
                     facebook: String,
                     twitter: String,
@@ -33,7 +33,7 @@ const companySchema = new Schema({
                     id: String,
                     name: String
                 },
-                coreTeam: [teamMemberSchema] //Core Team Members
+                // coreTeam: [teamMemberSchema] //Core Team Members
             }
         },
         targetMarket: {
@@ -70,11 +70,11 @@ const companySchema = new Schema({
             }]
         },
         products: {
-            title: String, //"title": "Products and Services",
+            title: String, // "title"
             data: [{
                 id: String,
                 name: String, //Product Name
-                type: String, //Product or Service
+                productType: String, //Product or Service
                 description: String, //Product Description
                 website: String, //product website
                 url: String, //product image url
@@ -88,6 +88,6 @@ const companySchema = new Schema({
     claimedBy: String //userId of the owner if claimed
 });
 
-const Company = mongoose.model('Company', companySchema);
+const company = mongoose.model('company', companySchema);
 
-exports.default = Company;
+module.exports = company;
