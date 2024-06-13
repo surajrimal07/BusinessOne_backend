@@ -1,11 +1,10 @@
 const { json } = require("express");
 const WorkDomain = require("../model/workDomainModel");
 
-
 const createWorkDomain = async (req, res) => {
   const { workDomain } = req.body;
 
-  if (!workDomain ) {
+  if (!workDomain) {
     return res.json({
       success: false,
       message: "Please Enter all the fields",
@@ -19,11 +18,8 @@ const createWorkDomain = async (req, res) => {
         message: "Domain exists",
       });
     }
-
-   
-
     const newWorkDomain = new WorkDomain({
-      workDomain:workDomain
+      workDomain: workDomain,
     });
 
     await newWorkDomain.save();
@@ -38,8 +34,17 @@ const createWorkDomain = async (req, res) => {
   }
 };
 
-
+const getWorkDomain = async (req, res) => {
+  try {
+    const contents = await WorkDomain.find();
+    res.status(200).json(contents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   createWorkDomain,
+  getWorkDomain
 };
