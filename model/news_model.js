@@ -29,6 +29,10 @@ const newsSchema = mongoose.Schema({
     required: true,
     default: Date.now(),
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const news = mongoose.model("news", newsSchema);

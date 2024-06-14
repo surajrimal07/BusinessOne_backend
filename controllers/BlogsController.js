@@ -108,9 +108,66 @@ const calculateReadingTime = (content) => {
   return readingTime;
 };
 
+
+const updateBlog = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, tags, shortDescription } = req.body;
+  const imageUrl = req.file;
+
+  console.log(req.body);
+  console.log(req.file);
+
+  // Check if required fields are provided
+  if (!title || !description || !shortDescription || !tags) {
+    return res.json({
+      success: false,
+      message: "Please provide content",
+    });
+  }
+
+  try {
+    // Find existing content by ID
+    const existingContent = await News.findById(id);
+    if (!existingContent) {
+      return res.status(404).json({
+        success: false,
+        message: "Content not found",
+      });
+    }
+
+    // Update fields
+    existingContent.title = title;
+    existingContent.description = description;
+    existingContent.tags = tags;
+    existingContent.shortDescription = shortDescription;
+
+    // Update image if provided
+    if (imageUrl) {
+      existingContent.image = `${process.env.BACKEND_URL}/uploads/${imageUrl.filename}`;
+    }
+
+    await existingContent.save();
+
+    res.json({
+      success: true,
+      message: "Content updated successfully",
+      content: existingContent,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server Error",
+    });
+  }
+};
+
+
+
 module.exports = {
   CreateBlogs,
   getContent,
   getContentById,
   getRecentlyAddedBlogs,
+  updateBlog
 };
