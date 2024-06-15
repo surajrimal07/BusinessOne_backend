@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
-// const Schema = mongoose.Schema;
-
-const companySchema = mongoose.Schema({
+const companySchema = new mongoose.Schema({
     name: String, //company name
     sections: {
         introduction: {
@@ -10,7 +8,7 @@ const companySchema = mongoose.Schema({
                 name: String, //Company Name or known as
                 logo: String, //Company Logo
                 subtitle: String, //company tagline
-                sectors: [{  name: String }],
+                sectors: [{ name: String }],
                 socialLinks: { //social media links
                     facebook: String,
                     twitter: String,
@@ -88,6 +86,6 @@ const companySchema = mongoose.Schema({
     claimedBy: String //userId of the owner if claimed
 });
 
-const company = mongoose.model('company', companySchema);
+const company = mongoose.model('Company', companySchema);
 
 module.exports = company;

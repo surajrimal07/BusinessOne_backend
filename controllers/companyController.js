@@ -3,20 +3,22 @@ const Company = require("../model/company_model");
 
 const createCompany = async (req, res) => {
   try {
-    const companyData = req.body;
+      const { name, sections, isUserAdmin, isCompanyClaimed, claimedBy } = req.body;
 
-    // Create a new instance of the Company model with the provided data
-    const company = new Company(companyData);
+      const newCompany = new Company({
+          name,
+          sections,
+          isUserAdmin,
+          isCompanyClaimed,
+          claimedBy
+      });
 
-    const savedCompany = await company.save();
+      await newCompany.save();
 
-    res.status(200).json({
-      success: true,
-      message: "Created !!",
-    });
+      res.status(201).json({ success: true, message: 'Company created successfully', data: newCompany });
   } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
   }
 };
 
