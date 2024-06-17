@@ -2,21 +2,53 @@ const { json } = require("express");
 const Company = require("../model/company_model");
 
 const createCompany = async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
   try {
-    const companyData = req.body;
+    // Parse JSON fields
+    const companyBasicDetails = JSON.parse(req.body.companyBasicDetails);
+    const companyProductDetails = JSON.parse(req.body.companyProductDetails);
+    const companyTimelineDetails = JSON.parse(req.body.companyTimelineDetails);
+    const companyFundingDetails = JSON.parse(req.body.companyFundingDetails);
+    const companyDetails = JSON.parse(req.body.companyDetails);
+    const targetMarketDetail = JSON.parse(req.body.targetMarketDetail);
 
-    // Create a new instance of the Company model with the provided data
-    const company = new Company(companyData);
+    // Add image URLs to the parsed JSON objects
+    if (req.files["companyImage"]) {
+      companyBasicDetails.companyImage = `${process.env.BACKEND_URL}/uploads/${req.files["companyImage"][0].filename}`;
+      console.log("Company Image:", companyBasicDetails.companyImage);
+    }
 
-    const savedCompany = await company.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Created !!",
+    companyProductDetails.products.forEach((product, index) => {
+      if (req.files["productImages"] && req.files["productImages"][index]) {
+        product.image = `${process.env.BACKEND_URL}/uploads/${req.files["productImages"][index].filename}`;
+      }
     });
+
+    companyTimelineDetails.timelines.forEach((timeline, index) => {
+      if (req.files["timelineImages"] && req.files["timelineImages"][index]) {
+        timeline.image = `${process.env.BACKEND_URL}/uploads/${req.files["timelineImages"][index].filename}`;
+      }
+    });
+
+    const newCompany = new Company({
+      ...companyBasicDetails,
+      products: companyProductDetails.products,
+      timelines: companyTimelineDetails.timelines,
+      fundings: companyFundingDetails.fundings,
+      basicDescription: companyDetails.basicDescription,
+      marketDescription: targetMarketDetail.marketDescription,
+      businesstype: targetMarketDetail.businesstype,
+      revenueStream: targetMarketDetail.revenueStream,
+    });
+
+    await newCompany.save();
+    res.status(201).send(newCompany);
   } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
+    if (error.name === "ValidationError") {
+      return res.status(400).send(error.errors);
+    }
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };
 
