@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 app.use("/api/admin", require("./routes/adminRoute"));
 app.use("/api/domain", require("./routes/workDomainRoute"));
 app.use("/api/company", require("./routes/companyRoute"));
-app.use("/api/user", require("./routes/userRoute"));
+app.use("/api/user", require("./routes/userroute"));
 app.use("/api/blogs", require("./routes/BlogsRoute"));
 
 app.use((req, res, next) => {
