@@ -10,10 +10,13 @@ const app = express();
 dbConnect();
 
 const corsPolicy = {
-  origin: true,
+  flightContinue: true,
   credentials: true,
   optionSuccessStatus: 200,
+  credentials: true,
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'x-csrf-token']
 };
+
 app.use(cors(corsPolicy));
 
 app.use(express.json());

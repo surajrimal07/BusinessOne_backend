@@ -3,6 +3,7 @@ const User = require("../model/user_model");
 const bcrypt = require("bcryptjs");
 const { json } = require("express");
 const jwt = require("jsonwebtoken");
+const sendOTP = require("./otpControllers");
 
 
 //http://localhost:5000/api/user/signup
@@ -37,30 +38,33 @@ const signupUser = async (req, res) => {
 
 
 //http://localhost:5000/api/user/login
+
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).json({ message: "Please provide email and password" });
+            return res.status(400).json({ success: false, message: "Please provide email and password" });
         }
 
         const user = await User.findOne({ email }).populate('favroiteCompanies favroiteNews.newsId employeeOf reviews.companyId connections');
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ success: false, message: "Invalid credentials" });
         }
 
         const token = jwt.sign({ email: user.email }, process.env.JWT_TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRY_TIME });
 
-        res.status(200).json({ message: "Login success", data: user, token });
+        res.status(200).json({ success: true, message: "Login success", data: user, token });
 
     } catch (error) {
-        res.status(500).json({ message: "Login error" });
+        console.log(error);
+        res.status(500).json({ success: false, message: "Login error" });
     }
 }
 
 
-//need testing
+//works
+//http://localhost:5000/api/user/updateuser
 const updateUser = async (req, res) => {
     try {
         const { username, email, password, bio, darkmode, workDomain, picture, favroiteCompanies, favroiteNews, interests, employeeOf, reviews, connections } = req.body;
@@ -86,8 +90,9 @@ const updateUser = async (req, res) => {
         if (interests) updateData.interests = interests;
         if (employeeOf) updateData.employeeOf = employeeOf;
         if (reviews) updateData.reviews = reviews;
+        if (connections) updateData.connections = connections;
 
-        const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true });
+        const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true }).populate('favroiteCompanies favroiteNews.newsId employeeOf reviews.companyId connections');
 
         res.status(200).json({ message: "User updated successfully", data: updatedUser });
     } catch (error) {
@@ -95,18 +100,23 @@ const updateUser = async (req, res) => {
     }
 };
 
-
+//http://localhost:5000/api/user/deleteuser
 const deleteUser = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, password } = req.body;
 
-        if (!email) {
-            return res.status(400).json({ message: "Please provide an email" });
+        if (!email || !password) {
+            return res.status(400).json({ message: "Please provide an email and password" });
         }
 
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
             return res.status(400).json({ message: "User with this email does not exist" });
+        }
+
+        //check password too
+        if (!bcrypt.compare(password, existingUser.password)) {
+            return res.status(400).json({ message: "Invalid credentials" });
         }
 
         await User.findOneAndDelete({ email });
@@ -118,35 +128,5 @@ const deleteUser = async (req, res) => {
 };
 
 
-// const getUser = async (req, res) => {
-//     try {
-//         const { email } = req.query;
 
-//         if (!email) {
-//             return res.status(400).json({ message: "Please provide an email" });
-//         }
-
-//         const user = await User.findOne({ email }).populate('favroiteCompanies favroiteNews.newsId employeeOf reviews.companyId connections');
-
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found" });
-//         }
-
-//         res.status(200).json({ data: user });
-//     } catch (error) {
-//         res.status(500).json({ message: "Retrieval error", error: error.message });
-//     }
-// };
-
-
-//to do
-const createConnection = async (req, res) => { };
-
-
-//setup node mailer
-const forgetPassword = async (req, res) => { };
-
-
-
-
-module.exports = { loginUser, signupUser, updateUser, deleteUser, createConnection, forgetPassword };
+module.exports = { loginUser, signupUser, updateUser, deleteUser };
