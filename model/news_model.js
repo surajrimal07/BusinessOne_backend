@@ -37,4 +37,4 @@ const newsSchema = mongoose.Schema({
 
 const News = mongoose.model("News", newsSchema);
 
-module.exports = news;
+module.exports = News;
