@@ -33,6 +33,7 @@ app.use(express.urlencoded({ limit: "40mb", extended: true }));
 const PORT = process.env.PORT;
 app.get("/", (req, res) => {
   res.send("BusinessOne API Has been started");
+  console.log("BusinessOne API Has been started");
 });
 
 app.use("/api/admin", require("./routes/adminRoute"));
