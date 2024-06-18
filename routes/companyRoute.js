@@ -11,6 +11,9 @@ router.post(
   ]),
   CompanyController.createCompany
 );
-router.get(`/view_details_of_company/:name`, CompanyController.viewCompany);
+router.get(`/view_details_of_company/:id`, CompanyController.viewCompany);
+
+router.get("/get_all_company", CompanyController.viewAllCompany);
+router.get("/get_category_company", CompanyController.viewCompanyByCategory);
 
 module.exports = router;
