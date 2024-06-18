@@ -52,11 +52,28 @@ const createCompany = async (req, res) => {
   }
 };
 
-const viewCompany = async (req, res) => {
+const viewAllCompany = async (req, res) => {
   try {
-    const companyName = req.params.name;
-    const regex = new RegExp(companyName, "i");
-    const companies = await Company.find({ name: regex });
+    const companies = await Company.find();
+    res.status(200).json({
+      success: true,
+      companies,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const viewCompany = async (req, res) => {
+  console.log(req.params.id);
+  try {
+    const companyName = req.params.id;
+    // const regex = new RegExp(companyName, "i");
+    const companies = await Company.find({ _id: companyName });
 
     if (!companies) {
       return res.status(404).json({
@@ -78,7 +95,20 @@ const viewCompany = async (req, res) => {
   }
 };
 
+const viewCompanyByCategory = async (req, res) => {
+  const { category } = req.query;
+  console.log("Category:", category);
+  try {
+    const companies = await Company.find({ category: category });
+    res.status(200).json({ success: true, companies });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createCompany,
+  viewAllCompany,
+  viewCompanyByCategory,
   viewCompany,
 };
