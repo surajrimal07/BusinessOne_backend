@@ -44,7 +44,16 @@ const getWorkDomain = async (req, res) => {
   }
 };
 
+
+const testWork= async(req,res)=>{
+  res.json({
+    success: true,
+    message: "BusinessOne API Has been started and the text is success....",
+  });
+}
+
 module.exports = {
   createWorkDomain,
-  getWorkDomain
+  getWorkDomain,
+  testWork
 };
