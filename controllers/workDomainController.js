@@ -50,6 +50,8 @@ const testWork= async(req,res)=>{
     success: true,
     message: "BusinessOne API Has been started and the test is successfully running ....",
   });
+  console.log("BusinessOne API Has been started and the test is successfully running ....");
+
 }
 
 module.exports = {
