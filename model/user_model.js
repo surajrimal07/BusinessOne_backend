@@ -1,19 +1,21 @@
 const mongoose = require("mongoose");
 
-
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
   username: { type: String, required: true }, // firstname and lastname
-  email: { type: String, required: true, unique: true }, //email {uniqzue}
+  email: { type: String, required: true, unique: true }, //email {unique}
   password: { type: String, required: true },  //hashed password {bcrypt}
   bio: String, //bio of the user
   darkmode: { type: Boolean, default: false }, //darkmode true or false
   workDomain: String, //domain of the user sector eg: "Healthcare", "Education", "Construction & Real estate"
-  picture: String, //aws bucket or cloudnary url
-  //ownerOf: [{ type: Schema.Types.ObjectId, ref: 'Company' }], //list of companies the user owns if any //not necessary according to pratik sir
-  favroiteCompanies: [{ type: Schema.Types.ObjectId, ref: 'Company' }], //list of favorite companies
+  picture: String, //aws bucket or cloudinary url
+  favroiteCompanies: [
+    {
+      type: Schema.Types.ObjectId, ref: 'Company'
+    }
 
+  ], //list of favorite companies
   favroiteNews: [
     {
       newsId: { type: Schema.Types.ObjectId, ref: 'News' }, //news id
@@ -21,11 +23,8 @@ const userSchema = new Schema({
     }
   ], //list of favorite news
   interests: [String], //list of interests
-
   employeeOf: [{ type: Schema.Types.ObjectId, ref: 'Company' }], //list of companies the user is employee of
   reviews: [
-    //review should be only for the companies the user is employee of
-    //or yedi kasaile company ma connection gareko xa vane tyo company ko review garna milxa
     {
       companyId: { type: Schema.Types.ObjectId, ref: 'Company' }, //company id
       rating: { type: Number, required: true }, //rating 1-5
@@ -35,7 +34,6 @@ const userSchema = new Schema({
   ],
   connections: [{ type: Schema.Types.ObjectId, ref: 'Connection' }], //list of connections
 });
-
 
 const User = mongoose.model('User', userSchema);
 
