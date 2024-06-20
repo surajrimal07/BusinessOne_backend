@@ -10,6 +10,7 @@ const userSchema = new Schema({
   darkmode: { type: Boolean, default: false }, //darkmode true or false
   workDomain: String, //domain of the user sector eg: "Healthcare", "Education", "Construction & Real estate"
   picture: String, //aws bucket or cloudinary url
+  isAdmin: { type: Boolean, default: false }, //admin true or false //yo just for testing, paxi milau hai 
   favroiteCompanies: [
     {
       type: Schema.Types.ObjectId, ref: 'Company'
