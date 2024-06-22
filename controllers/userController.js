@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 const { json } = require("express");
 const jwt = require("jsonwebtoken");
 const sendOTP = require("./otpControllers");
-
+const multer = require('multer');
+const cloudinary = require("cloudinary").v2;
 
 //http://localhost:5000/api/user/signup
 const signupUser = async (req, res) => {
@@ -62,43 +63,85 @@ const loginUser = async (req, res) => {
     }
 }
 
-
-//works
-//http://localhost:5000/api/user/updateuser
 const updateUser = async (req, res) => {
-    try {
-        const { username, email, password, bio, darkmode, workDomain, picture, favroiteCompanies, favroiteNews, interests, employeeOf, reviews, connections } = req.body;
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage }).single('picture');
 
-        if (!email) {
-            return res.status(400).json({ message: "Please provide an email" });
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Multer upload error", error: err.message });
         }
 
-        const existingUser = await User.findOne({ email });
-        if (!existingUser) {
-            return res.status(400).json({ message: "User with this email does not exist" });
+        try {
+            const email = req.body.email;
+            const username = req.body.username;
+            const password = req.body.password;
+            const bio = req.body.bio;
+            const darkmode = req.body.darkmode;
+            const workDomain = req.body.workDomain;
+            const favroiteCompanies = req.body.favroiteCompanies;
+            const favroiteNews = req.body.favroiteNews;
+            const interests = req.body.interests;
+            const employeeOf = req.body.employeeOf;
+            const reviews = req.body.reviews;
+            const connections = req.body.connections;
+
+            if (!email) {
+                return res.status(400).json({ message: "Please provide an email" });
+            }
+
+            const existingUser = await User.findOne({ email });
+            if (!existingUser) {
+                return res.status(400).json({ message: "User with this email does not exist" });
+            }
+
+            let updateData = {};
+            if (username) updateData.username = username;
+            if (password) updateData.password = await bcrypt.hash(password, 10);
+            if (bio) updateData.bio = bio;
+            if (typeof darkmode !== 'undefined') updateData.darkmode = darkmode;
+            if (workDomain) updateData.workDomain = workDomain;
+
+            if (req.file) {
+                const file = req.file;
+                console.log("File:", file);
+                let uploadedImage;
+                try {
+                    uploadedImage = await new Promise((resolve, reject) => {
+                        cloudinary.uploader.upload_stream(
+                            { folder: "UserDP", crop: "scale", overwrite: true },
+                            (error, result) => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve(result);
+                                }
+                            }
+                        ).end(file.buffer);
+                    });
+                    updateData.picture = uploadedImage.secure_url;
+                } catch (error) {
+                    console.error("Image upload error:", error);
+                    return res.status(500).json({ message: "Image upload error" });
+                }
+            }
+
+            if (favroiteCompanies) updateData.favroiteCompanies = favroiteCompanies;
+            if (favroiteNews) updateData.favroiteNews = favroiteNews;
+            if (interests) updateData.interests = interests;
+            if (employeeOf) updateData.employeeOf = employeeOf;
+            if (reviews) updateData.reviews = reviews;
+            if (connections) updateData.connections = connections;
+
+            const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true }).populate('favroiteCompanies favroiteNews.newsId employeeOf reviews.companyId connections');
+
+            res.status(200).json({ message: "User updated successfully", data: updatedUser });
+        } catch (error) {
+            res.status(500).json({ message: "Update error", error: error.message });
         }
-
-        let updateData = {};
-        if (username) updateData.username = username;
-        if (password) updateData.password = await bcrypt.hash(password, 10);
-        if (bio) updateData.bio = bio;
-        if (typeof darkmode !== 'undefined') updateData.darkmode = darkmode;
-        if (workDomain) updateData.workDomain = workDomain;
-        if (picture) updateData.picture = picture;
-        if (favroiteCompanies) updateData.favroiteCompanies = favroiteCompanies;
-        if (favroiteNews) updateData.favroiteNews = favroiteNews;
-        if (interests) updateData.interests = interests;
-        if (employeeOf) updateData.employeeOf = employeeOf;
-        if (reviews) updateData.reviews = reviews;
-        if (connections) updateData.connections = connections;
-
-        const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true }).populate('favroiteCompanies favroiteNews.newsId employeeOf reviews.companyId connections');
-
-        res.status(200).json({ message: "User updated successfully", data: updatedUser });
-    } catch (error) {
-        res.status(500).json({ message: "Update error", error: error.message });
-    }
+    });
 };
+
 
 //http://localhost:5000/api/user/deleteuser
 const deleteUser = async (req, res) => {
