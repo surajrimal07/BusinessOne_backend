@@ -16,5 +16,6 @@ router.get(`/view_details_of_company/:id`, CompanyController.viewCompany);
 
 router.get("/get_all_company", CompanyController.viewAllCompany);
 router.get("/get_category_company", CompanyController.viewCompanyByCategory);
+router.get("/get_new_company", CompanyController.viewNewAddedCompany);
 
 module.exports = router;

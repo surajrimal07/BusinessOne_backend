@@ -97,9 +97,20 @@ const viewCompany = async (req, res) => {
 
 const viewCompanyByCategory = async (req, res) => {
   const { category } = req.query;
-  console.log("Category:", category);
+  // console.log("Category:", category);
   try {
     const companies = await Company.find({ category: category });
+    res.status(200).json({ success: true, companies });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+const viewNewAddedCompany = async (req, res) => {
+  try {
+    const companies = await Company.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, companies });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -111,4 +122,5 @@ module.exports = {
   viewAllCompany,
   viewCompanyByCategory,
   viewCompany,
+  viewNewAddedCompany
 };
