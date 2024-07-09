@@ -12,15 +12,14 @@ const signupUser = async (req, res) => {
 
     if (!username || !email || !password) {
       return res
-        .status(400)
-        .json({ message: "Please provide username, email, and password" });
+        
+        .json({success: false, message: "Please provide username, email, and password" });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
-        .status(400)
-        .json({ message: "User with this email already exists" });
+        .json({ success: false , message: "User with this email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,7 +34,7 @@ const signupUser = async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({
+    res.json({
       success: true,
       message: "User created successfully",
       data: newUser,
@@ -144,6 +143,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "Update error", error: error.message });
   }
 };
+
 
 //http://localhost:5000/api/user/deleteuser
 const deleteUser = async (req, res) => {
