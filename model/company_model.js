@@ -41,6 +41,14 @@ const CompanySchema = new Schema({
   marketDescription: { type: String },
   businesstype: { type: String },
   revenueStream: { type: String },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  isClaimed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Company", CompanySchema);

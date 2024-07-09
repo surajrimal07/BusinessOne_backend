@@ -6,6 +6,8 @@ const userSchema = new Schema({
   username: { type: String, required: true }, // firstname and lastname
   email: { type: String, required: true, unique: true }, //email {unique}
   password: { type: String, required: true },  //hashed password {bcrypt}
+  phone:{ type: String},
+  address:{ type: String},
   bio: String, //bio of the user
   darkmode: { type: Boolean, default: false }, //darkmode true or false
   workDomain: String, //domain of the user sector eg: "Healthcare", "Education", "Construction & Real estate"
@@ -34,6 +36,7 @@ const userSchema = new Schema({
     }
   ],
   connections: [{ type: Schema.Types.ObjectId, ref: 'Connection' }], //list of connections
+  claimedCompany: [{ type: Schema.Types.ObjectId, ref: 'Company' }], //list of companies the user is employee of
 });
 
 const User = mongoose.model('User', userSchema);
