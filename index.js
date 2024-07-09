@@ -56,6 +56,7 @@ app.use("/api/blogs", require("./routes/BlogsRoute"));
 app.use("/api/editor", require("./routes/editorRoute"));
 app.use("/api/claim", require("./routes/ClaimedCompanyRoute"));
 app.use("/api/contact", require("./routes/contactRoute"));
+app.use("/api/faq", require("./routes/faqRoute"));
 
 app.use((req, res, next) => {
   res
