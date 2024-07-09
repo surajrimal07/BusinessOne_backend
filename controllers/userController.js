@@ -12,14 +12,14 @@ const signupUser = async (req, res) => {
 
     if (!username || !email || !password) {
       return res
-        
-        .json({success: false, message: "Please provide username, email, and password" });
+
+        .json({ success: false, message: "Please provide username, email, and password" });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
-        .json({ success: false , message: "User with this email already exists" });
+        .json({ success: false, message: "User with this email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -72,7 +72,7 @@ const loginUser = async (req, res) => {
     // Remove password from the user object
     const userWithoutPassword = user.toObject();
     delete userWithoutPassword.password;
-    delete userWithoutPassword._id;
+    //delete userWithoutPassword._id; yo cahixa app ma so enabling this
     res.json({
       success: true,
       message: "Login success",
