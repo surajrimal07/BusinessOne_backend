@@ -25,7 +25,6 @@ router.put(
 );
 router.put(
   "/admin_update_company/:id",
-  authGuardAdmin,
   uploadImage.fields([
     { name: "companyImage", maxCount: 1 },
     { name: "productImages", maxCount: 10 },

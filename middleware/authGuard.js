@@ -27,7 +27,7 @@ const authGuard = (req, res, next) => {
 
 const authGuardAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    console.log(authHeader)
+    // console.log(authHeader)
 
     if (!authHeader) {
         return res.status(401).json({ success: "false", message: "Authentication token is missing" });
@@ -55,4 +55,30 @@ const authGuardAdmin = (req, res, next) => {
     }
 };
 
-module.exports = { authGuard, authGuardAdmin };
+
+const newAuthGuard = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    console.log("Authorization Header:", authHeader);
+
+    if (!authHeader) {
+        return res.status(401).json({ success: false, message: "No token provided." });
+    }
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+        return res.status(401).json({ success: false, message: "Authorization format is Bearer <token>." });
+    }
+
+    const token = parts[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET); 
+        req.user = decoded; 
+        console.log(decoded)
+        next();
+    } catch (error) {
+        console.error("Token verification failed:", error.message);
+        return res.status(401).json({ success: false, message: "Invalid token." });
+    }
+};
+
+
+module.exports = { authGuard, authGuardAdmin,newAuthGuard };
