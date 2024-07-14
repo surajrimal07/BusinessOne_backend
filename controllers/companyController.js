@@ -1,5 +1,7 @@
 const { json } = require("express");
 const Company = require("../model/company_model");
+const User = require("../model/user_model");
+
 
 const createCompany = async (req, res) => {
   console.log(req.body);
@@ -40,9 +42,18 @@ const createCompany = async (req, res) => {
       marketDescription: targetMarketDetail.marketDescription,
       businesstype: targetMarketDetail.businesstype,
       revenueStream: targetMarketDetail.revenueStream,
+      isClaimed: !req.user.isAdmin
     });
 
     await newCompany.save();
+    console.log(req.user)
+    if (!req.user.isAdmin) {
+      await User.findByIdAndUpdate(req.user._id, {
+        $push: { claimedCompany: newCompany._id }
+      });
+    }
+
+
     res.status(201).send(newCompany);
   } catch (error) {
     if (error.name === "ValidationError") {

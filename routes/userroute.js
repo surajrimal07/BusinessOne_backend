@@ -4,10 +4,6 @@ const userController = require("../controllers/usercontroller");
 const connectionController = require("../controllers/connectionControllers");
 const otpController = require("../controllers/otpControllers");
 const {authGuard,authGuardAdmin} = require("../middleware/authGuard");
-const userController = require("../controllers/userController");
-const connectionController = require("../controllers/connectionControllers");
-const otpController = require("../controllers/otpControllers");
-const { authGuard, authGuardAdmin } = require("../middleware/authGuard");
 
 
 router.post("/login", userController.loginUser);
