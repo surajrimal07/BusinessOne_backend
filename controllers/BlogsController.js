@@ -90,7 +90,10 @@ const getRecentlyAddedBlogs = async (req, res) => {
   console.log(req.body);
 
   try {
-    const recentBlogs = await News.find({ _id: { $ne: id } , isDeleted: { $ne: true } })
+    const recentBlogs = await News.find({
+      _id: { $ne: id },
+      isDeleted: { $ne: true },
+    })
       .sort({ createdAt: -1 })
       .limit(4);
     res.status(200).json(recentBlogs);
@@ -100,6 +103,17 @@ const getRecentlyAddedBlogs = async (req, res) => {
   }
 };
 
+const getRecentlyAddedAllBlogs = async (req, res) => {
+  try {
+    const recentBlogs = await News.find({ isDeleted: { $ne: true } })
+      .sort({ createdAt: -1 })
+      .limit(4);
+    res.status(200).json(recentBlogs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const calculateReadingTime = (content) => {
   const averageReadingSpeed = 300; // average reading speed in words per minute
   const wordCount = content.split(/\s+/).length;
@@ -161,7 +175,7 @@ const updateBlog = async (req, res) => {
 };
 
 const deleteBlog = async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const { id } = req.params;
 
   try {
@@ -172,7 +186,7 @@ const deleteBlog = async (req, res) => {
     }
 
     content.isDeleted = true;
-    const updatedContent = await content.save(); 
+    const updatedContent = await content.save();
 
     res.status(200).json(updatedContent);
   } catch (error) {
@@ -186,6 +200,7 @@ module.exports = {
   getContent,
   getContentById,
   getRecentlyAddedBlogs,
+  getRecentlyAddedAllBlogs,
   updateBlog,
   deleteBlog,
 };

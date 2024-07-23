@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const CompanyController = require("../controllers/companyController");
 const uploadImage = require("../helpers/uploadHelper.js");
-const { authGuardAdmin } = require("../middleware/authGuard");
+const { authGuardAdmin,newAuthGuard } = require("../middleware/authGuard");
 
 router.post(
   "/create_company",
-  authGuardAdmin,
+  newAuthGuard,
   uploadImage.fields([
     { name: "companyImage", maxCount: 1 },
     { name: "productImages", maxCount: 10 },
@@ -25,7 +25,6 @@ router.put(
 );
 router.put(
   "/admin_update_company/:id",
-  authGuardAdmin,
   uploadImage.fields([
     { name: "companyImage", maxCount: 1 },
     { name: "productImages", maxCount: 10 },

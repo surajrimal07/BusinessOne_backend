@@ -8,8 +8,8 @@ const { authGuard, authGuardAdmin } = require("../middleware/authGuard");
 
 router.post("/login", userController.loginUser);
 router.post("/signup", userController.signupUser);
-router.post("/updateuser", authGuard, userController.updateUser);
-router.post("/deleteuser", authGuard, userController.deleteUser);
+router.post("/updateuser",authGuard, userController.updateUser);
+router.post("/deleteuser",authGuard, userController.deleteUser);
 
 router.post('/forgotpassword', otpController.sendOTPMail);
 router.post('/verify-otp', otpController.verifyOTPMail);
